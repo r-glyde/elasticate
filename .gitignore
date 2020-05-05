@@ -1,0 +1,15 @@
+.ensime
+.ensime_cache/
+.idea/
+target/
+.metals/
+.bloop/
+lib_managed/
+src_managed/
+project/boot/
+.history
+.cache
+.coursier-cache/
+project/metals.sbt
+.project
+.settings
