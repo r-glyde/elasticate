@@ -7,7 +7,7 @@ import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
 
 final case class Delete(index: String, id: String, additionalParams: Map[String, String] = Map.empty)
-    extends Bulkable[Nothing] {
+    extends BulkableRequest[Nothing] {
 
   override type Response = BasicResponse
 

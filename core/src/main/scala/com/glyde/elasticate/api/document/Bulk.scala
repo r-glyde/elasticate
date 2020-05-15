@@ -6,7 +6,8 @@ import com.glyde.elasticate.api.{ElasticMethod, ElasticRequest}
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 
-final case class Bulk[+T](messages: List[Bulkable[T]], additionalParams: Map[String, String] = Map.empty)
+// TODO: types in bulk request are ugly
+final case class Bulk[+T](messages: List[BulkableRequest[T]], additionalParams: Map[String, String] = Map.empty)
     extends ElasticRequest[String] {
 
   override type Response = BulkResponse

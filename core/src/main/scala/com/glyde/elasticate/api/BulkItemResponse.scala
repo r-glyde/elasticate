@@ -15,6 +15,7 @@ object BulkItemResponse {
       Decoder[DeleteBulkResponse].widen,
     ).reduceLeft(_ or _)
 
+  // TODO: this isn't a very helpful way of modelling these errors
   final case class IndexBulkResponse(index: BasicResponse)   extends BulkItemResponse
   final case class CreateBulkResponse(create: BasicResponse) extends BulkItemResponse
   final case class DeleteBulkResponse(delete: BasicResponse) extends BulkItemResponse

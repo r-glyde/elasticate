@@ -2,7 +2,7 @@ package com.glyde.elasticate.api
 
 import io.circe.Decoder
 
-private[elasticate] trait ElasticRequest[+T] {
+abstract class ElasticRequest[+T] private[elasticate] {
 
   type Response
 

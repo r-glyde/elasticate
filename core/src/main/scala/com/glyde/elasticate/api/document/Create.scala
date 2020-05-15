@@ -11,7 +11,7 @@ final case class Create[T : Encoder](index: String,
                                      id: String,
                                      entity: T,
                                      additionalParams: Map[String, String] = Map.empty)
-    extends Bulkable[Json] {
+    extends BulkableRequest[Json] {
 
   override type Response = BasicResponse
 
