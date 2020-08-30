@@ -42,11 +42,10 @@ object Http4sDemo extends IOApp {
         )
 
         (for {
-          _   <- requests
-          res <- esClient.send(Bulk(bulkRequests))
-          _   <- IO { println(res.body.map(_.items)) }
-          _   <- esClient.send(index.Delete(movieIndex))
-          _   <- esClient.send(index.Delete(bookIndex))
+          _ <- requests
+          _ <- esClient.send(Bulk(bulkRequests))
+          _ <- esClient.send(index.Delete(movieIndex))
+          _ <- esClient.send(index.Delete(bookIndex))
         } yield ()).as(ExitCode.Success)
       }
     }
