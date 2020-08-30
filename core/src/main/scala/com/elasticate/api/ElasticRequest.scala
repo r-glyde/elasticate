@@ -1,4 +1,4 @@
-package com.glyde.elasticate.api
+package com.elasticate.api
 
 import io.circe.Decoder
 

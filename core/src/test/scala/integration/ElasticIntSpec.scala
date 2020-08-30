@@ -1,7 +1,7 @@
 package integration
 
 import base.ElasticIntegrationSpecBase
-import com.glyde.elasticate.ElasticClient
+import com.elasticate.ElasticClient
 import io.circe.{Encoder, Json}
 import org.elasticsearch.client.Request
 import org.scalatest.{BeforeAndAfterAllConfigMap, BeforeAndAfterEach, ConfigMap, EitherValues}
@@ -34,7 +34,7 @@ class ElasticIntSpec
   val movieIndex = "movies"
 
   "document api" should {
-    import com.glyde.elasticate.api.document._
+    import com.elasticate.api.document._
 
     "successfully bulk document requests together" in new TestContext {
       val bulkRequests = List(

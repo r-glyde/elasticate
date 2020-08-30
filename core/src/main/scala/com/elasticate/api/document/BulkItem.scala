@@ -1,4 +1,4 @@
-package com.glyde.elasticate.api.document
+package com.elasticate.api.document
 
 import io.circe.Json
 

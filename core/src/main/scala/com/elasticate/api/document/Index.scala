@@ -1,8 +1,9 @@
-package com.glyde.elasticate.api.document
+package com.elasticate.api.document
 
-import com.glyde.elasticate.api.ElasticMethod
-import com.glyde.elasticate.api.ElasticMethod.{Post, Put}
-import com.glyde.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.api.ElasticMethod
+import ElasticMethod.{Post, Put}
+import com.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.utils.MapOps
 import io.circe._
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
@@ -24,7 +25,7 @@ final case class Index[T : Encoder](index: String,
     val fields = List(
       Option("_index" -> index.asJson),
       id.map(id => "_id" -> id.asJson)
-    ).flatten ++ additionalParams.mapValues(_.asJson).toList
+    ).flatten ++ additionalParams.strictMapValues(_.asJson).toList
 
     BulkItem(Map("index" -> JsonObject(fields: _*)).asJson, Option(entity.asJson))
   }

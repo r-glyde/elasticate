@@ -1,7 +1,7 @@
-package com.glyde.elasticate.api
+package com.elasticate.api
 
 import cats.syntax.functor._
-import com.glyde.elasticate.api.ElasticResponse.BasicResponse
+import ElasticResponse.BasicResponse
 import io.circe.Decoder
 
 sealed trait BulkItemResponse extends Product with Serializable

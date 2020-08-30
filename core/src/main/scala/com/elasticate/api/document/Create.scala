@@ -1,8 +1,9 @@
-package com.glyde.elasticate.api.document
+package com.elasticate.api.document
 
-import com.glyde.elasticate.api.ElasticMethod
-import com.glyde.elasticate.api.ElasticMethod.Post
-import com.glyde.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.api.ElasticMethod
+import ElasticMethod.Post
+import com.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.utils.MapOps
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder, Json}
@@ -26,7 +27,7 @@ final case class Create[T : Encoder](index: String,
       "_id"    -> id
     ) ++ additionalParams
 
-    BulkItem(Map("create" -> fields.mapValues(_.asJson)).asJson, Option(entity.asJson))
+    BulkItem(Map("create" -> fields.strictMapValues(_.asJson)).asJson, Option(entity.asJson))
   }
 
 }

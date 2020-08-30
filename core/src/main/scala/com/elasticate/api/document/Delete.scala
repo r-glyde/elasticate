@@ -1,7 +1,8 @@
-package com.glyde.elasticate.api.document
+package com.elasticate.api.document
 
-import com.glyde.elasticate.api.ElasticMethod
-import com.glyde.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.api.ElasticMethod
+import com.elasticate.api.ElasticResponse.BasicResponse
+import com.elasticate.utils.MapOps
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax._
@@ -22,7 +23,7 @@ final case class Delete(index: String, id: String, additionalParams: Map[String,
       "_id"    -> id
     ) ++ additionalParams
 
-    BulkItem(Map("delete" -> fields.mapValues(_.asJson)).asJson, None)
+    BulkItem(Map("delete" -> fields.strictMapValues(_.asJson)).asJson, None)
   }
 
 }

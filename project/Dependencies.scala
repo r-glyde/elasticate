@@ -5,11 +5,11 @@ object Dependencies {
   val circeVersion = "0.13.0"
 
   lazy val commonDeps = Seq(
-    "com.softwaremill.sttp.client" %% "core"           % "2.1.0-RC1",
+    "com.softwaremill.sttp.client" %% "core"           % "2.2.6",
     "io.circe"                     %% "circe-core"     % circeVersion,
     "io.circe"                     %% "circe-parser"   % circeVersion,
     "io.circe"                     %% "circe-generic"  % circeVersion,
-    "org.typelevel"                %% "cats-core"      % "2.1.0",
+    "org.typelevel"                %% "cats-core"      % "2.1.1",
     "ch.qos.logback"               % "logback-classic" % "1.2.3"
   )
 
@@ -22,9 +22,9 @@ object Dependencies {
   lazy val coreDeps = commonDeps ++ testDeps
 
   lazy val exampleDeps = commonDeps ++ Seq(
-    "org.typelevel"                %% "cats-effect"              % "2.1.3",
-    "com.softwaremill.sttp.client" %% "http4s-backend"           % "2.1.0-RC1",
-    "org.http4s"                   %% "http4s-async-http-client" % "0.21.2"
+    "org.typelevel"                %% "cats-effect"              % "2.1.4",
+    "com.softwaremill.sttp.client" %% "http4s-backend"           % "2.2.6",
+    "org.http4s"                   %% "http4s-async-http-client" % "0.21.7"
   )
 
 }

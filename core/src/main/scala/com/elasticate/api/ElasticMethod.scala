@@ -1,4 +1,4 @@
-package com.glyde.elasticate.api
+package com.elasticate.api
 
 sealed trait ElasticMethod extends Product with Serializable
 

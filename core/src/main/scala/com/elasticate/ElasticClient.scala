@@ -1,17 +1,17 @@
-package com.glyde.elasticate
+package com.elasticate
 
 import java.nio.charset.StandardCharsets
 
-import cats.Functor
 import cats.syntax.either._
-import com.glyde.elasticate.api.{ElasticMethod, ElasticRequest, Error, ErrorResponse}
+import com.elasticate.api.ElasticMethod._
+import com.elasticate.api.{ElasticRequest, Error, ErrorResponse}
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.parser._
 import sttp.client._
 import sttp.model.MediaType
 
-class ElasticClient[F[_] : Functor](host: String)(implicit backend: SttpBackend[F, Nothing, NothingT]) {
+class ElasticClient[F[_]](host: String)(implicit backend: SttpBackend[F, Nothing, NothingT]) {
   def send[T](request: ElasticRequest[T]): F[Response[Either[ErrorResponse, request.Response]]] = {
 
     import request.responseDecoder
@@ -20,10 +20,10 @@ class ElasticClient[F[_] : Functor](host: String)(implicit backend: SttpBackend[
     val uri      = uri"$endpoint?${request.additionalParams}"
 
     val baseRequest = request.method match {
-      case ElasticMethod.Get    => basicRequest.get(uri)
-      case ElasticMethod.Post   => basicRequest.post(uri)
-      case ElasticMethod.Put    => basicRequest.put(uri)
-      case ElasticMethod.Delete => basicRequest.delete(uri)
+      case Get    => basicRequest.get(uri)
+      case Post   => basicRequest.post(uri)
+      case Put    => basicRequest.put(uri)
+      case Delete => basicRequest.delete(uri)
     }
 
     val req = request.body match {

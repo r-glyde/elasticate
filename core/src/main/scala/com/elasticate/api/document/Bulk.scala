@@ -1,8 +1,8 @@
-package com.glyde.elasticate.api.document
+package com.elasticate.api.document
 
-import com.glyde.elasticate.api.ElasticMethod.Post
-import com.glyde.elasticate.api.ElasticResponse.BulkResponse
-import com.glyde.elasticate.api.{ElasticMethod, ElasticRequest}
+import com.elasticate.api.ElasticMethod.Post
+import com.elasticate.api.{ElasticMethod, ElasticRequest}
+import com.elasticate.api.ElasticResponse.BulkResponse
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 
