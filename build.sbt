@@ -2,14 +2,18 @@ name := "elasticate"
 version := "0.1.0"
 
 lazy val root = Project("elasticate", file("."))
-  .aggregate(core, examples)
+  .aggregate(core, examples, fs2)
 
 lazy val core = module("core")
   .settings(libraryDependencies ++= Dependencies.coreDeps)
 
+lazy val fs2 = module("fs2")
+  .settings(libraryDependencies ++= Dependencies.fs2Deps)
+  .dependsOn(core)
+
 lazy val examples = module("examples")
   .settings(libraryDependencies ++= Dependencies.exampleDeps)
-  .dependsOn(core)
+  .dependsOn(core, fs2)
 
 def module(name: String) =
   Project(name, file(name))

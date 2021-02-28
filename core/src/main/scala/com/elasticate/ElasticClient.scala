@@ -2,7 +2,9 @@ package com.elasticate
 
 import java.nio.charset.StandardCharsets
 
+import cats.Functor
 import cats.syntax.either._
+import cats.syntax.functor._
 import com.elasticate.api.ElasticMethod._
 import com.elasticate.api.{ElasticRequest, Error, ErrorResponse}
 import io.circe.Json
@@ -11,13 +13,14 @@ import io.circe.parser._
 import sttp.client._
 import sttp.model.MediaType
 
-class ElasticClient[F[_]](host: String)(implicit backend: SttpBackend[F, Nothing, NothingT]) {
-  def send[T](request: ElasticRequest[T]): F[Response[Either[ErrorResponse, request.Response]]] = {
+final class ElasticClient[F[_] : Functor](host: String)(implicit backend: SttpBackend[F, Nothing, NothingT]) {
+  def send[T](request: ElasticRequest[T]): F[Either[ErrorResponse, request.Response]] = {
 
     import request.responseDecoder
 
-    val endpoint = s"$host/${request.endpoint}"
-    val uri      = uri"$endpoint?${request.additionalParams}"
+    val endpoint     = s"$host/${request.endpoint}"
+    val uri          = uri"$endpoint?${request.additionalParams}"
+    val defaultError = (str: String) => ErrorResponse(Error(s"Response body cannot be interpreted: $str", "", ""))
 
     val baseRequest = request.method match {
       case Get    => basicRequest.get(uri)
@@ -43,15 +46,12 @@ class ElasticClient[F[_]](host: String)(implicit backend: SttpBackend[F, Nothing
     }
 
     req
-      .response(asStringAlways.map(str => {
-        val error = ErrorResponse(Error(s"Response body cannot be interpreted: $str", "", ""))
-        parse(str) match {
-          case Left(_) => error.asLeft
-          case Right(json) =>
-            json.as[request.Response].fold(_ => json.as[ErrorResponse].getOrElse(error).asLeft, _.asRight)
-        }
-      }))
+      .response(asStringAlways)
       .send()
+      .map { res =>
+        if (res.isSuccess) decode[request.Response](res.body).leftMap(e => defaultError(e.getMessage))
+        else decode[ErrorResponse](res.body).fold(e => defaultError(e.getMessage).asLeft, _.asLeft)
+      }
 
   }
 }

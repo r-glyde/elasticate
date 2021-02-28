@@ -2,18 +2,21 @@ package com.elasticate.examples
 
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import com.elasticate.ElasticClient
-import com.elasticate.api.document._
+import com.elasticate.api.document.{BulkableRequest, Create, Delete, Index}
 import com.elasticate.api.index
 import com.elasticate.examples.model.{Book, Movie}
-import io.circe.generic.auto._
+import com.elasticate.fs2.BulkPipe
+import fs2.Stream
 import io.circe.Json
+import io.circe.generic.auto._
 import org.http4s.client.asynchttpclient.AsyncHttpClient
 import org.http4s.client.middleware.Logger
-import sttp.client.{NothingT, SttpBackend}
 import sttp.client.http4s.Http4sBackend
+import sttp.client.{NothingT, SttpBackend}
 
-object Http4sDemo extends IOApp {
+import scala.concurrent.duration._
 
+object Fs2Demo extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
     Blocker[IO].use { blocker =>
       AsyncHttpClient.resource[IO]().use { client =>
@@ -25,15 +28,6 @@ object Http4sDemo extends IOApp {
         val movieIndex = "movies-http4s"
         val bookIndex  = "books-http4s"
 
-        val requests = for {
-          _ <- esClient.send(Index(movieIndex, Option("abc"), Movie("Titanic", 1997)))
-          _ <- esClient.send(Index(movieIndex, Option("def"), Movie("Fight Club", 1999)))
-          _ <- esClient.send(Create(movieIndex, "ghi", Movie("The Shawshank Redemption", 1994)))
-          _ <- esClient.send(Create(movieIndex, "abc", Movie("The Dark Knight", 2008)))
-          _ <- esClient.send(Delete(movieIndex, "abc"))
-          _ <- esClient.send(index.Delete(movieIndex))
-        } yield ()
-
         val bulkRequests: List[BulkableRequest[Json]] = List(
           Index(movieIndex, Option("abc"), Movie("Titanic", 1997)),
           Index(movieIndex, Option("def"), Movie("Fight Club", 1999)),
@@ -43,13 +37,18 @@ object Http4sDemo extends IOApp {
           Create(bookIndex, "def", Book("The Final Empire", "Brandon Sanderson"))
         )
 
+        val stream =
+          Stream(bulkRequests: _*)
+            .through(BulkPipe[IO](esClient, 2, 100.millis))
+            .evalTap(res => IO { println(res) })
+            .compile
+            .drain
+
         (for {
-          _ <- requests
-          _ <- esClient.send(Bulk(bulkRequests))
+          _ <- stream
           _ <- esClient.send(index.Delete(movieIndex))
           _ <- esClient.send(index.Delete(bookIndex))
         } yield ()).as(ExitCode.Success)
       }
     }
-
 }

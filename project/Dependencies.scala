@@ -16,7 +16,12 @@ object Dependencies {
   lazy val testDeps = Seq(
     "org.scalatest"            %% "scalatest"                % "3.1.0"  % Test,
     "org.elasticsearch.client" % "elasticsearch-rest-client" % "7.6.0"  % Test,
+    "com.github.tomakehurst"   % "wiremock-jre8-standalone"  % "2.27.2" % Test,
     "com.spotify"              % "docker-client"             % "8.16.0" % Test
+  )
+
+  lazy val fs2Deps = Seq(
+    "co.fs2" %% "fs2-core" % "2.4.0"
   )
 
   lazy val coreDeps = commonDeps ++ testDeps

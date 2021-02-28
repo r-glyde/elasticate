@@ -18,8 +18,6 @@ object SyncDemo extends App {
   val bookIndex  = "books-sync"
 
   val singleResponse = esClient.send(Index(movieIndex, Option("123"), Movie("Titanic", 1997)))
-  println(s"Status: ${singleResponse.code}")
-  println(s"Response Body: ${singleResponse.body}")
 
   val bulkRequests: List[BulkableRequest[Json]] = List(
     Create(movieIndex, "abc", Movie("Titanic", 1997)),
@@ -28,8 +26,6 @@ object SyncDemo extends App {
     Index(bookIndex, Option("def"), Book("The Final Empire", "Brandon Sanderson"))
   )
   val bulkResponse = esClient.send(Bulk(bulkRequests))
-  println(s"Status: ${bulkResponse.code}")
-  println(s"Response Body: ${bulkResponse.body}")
 
   esClient.send(index.Delete("*"))
   sttpBackend.close()
