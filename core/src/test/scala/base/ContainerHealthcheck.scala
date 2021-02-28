@@ -1,4 +1,4 @@
-package utils
+package base
 
 import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
 
