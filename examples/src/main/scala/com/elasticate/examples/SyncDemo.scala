@@ -6,13 +6,13 @@ import com.elasticate.api.index
 import com.elasticate.examples.model.{Book, Movie}
 import io.circe.generic.auto._
 import io.circe.Json
-import sttp.client.HttpURLConnectionBackend
+import sttp.client.{HttpURLConnectionBackend, Identity}
 
 object SyncDemo extends App {
 
   implicit val sttpBackend = HttpURLConnectionBackend()
 
-  val esClient = new ElasticClient("http://localhost:9201")
+  val esClient = new ElasticClient[Identity]("http://localhost:9201")
 
   val movieIndex = "movies-sync"
   val bookIndex  = "books-sync"
