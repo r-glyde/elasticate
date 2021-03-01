@@ -3,10 +3,10 @@ package com.elasticate
 import base.ContainerHealthcheck
 import com.elasticate.api.ElasticResponse.BasicResponse
 import com.elasticate.api.document.Create
-import io.circe.syntax.EncoderOps
-import models.Movie
+import data._
 import org.apache.http.HttpHost
-import org.elasticsearch.client.{Request, RestClient}
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.client.{RequestOptions, RestClient, RestHighLevelClient}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.FixtureAnyWordSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, EitherValues, Outcome}
@@ -22,7 +22,8 @@ class ElasticClientIntSpec
 
   override type FixtureParam = ElasticClient[Identity]
 
-  val testClient: RestClient = RestClient.builder(new HttpHost("localhost", 9201)).build()
+  val testClient: RestHighLevelClient =
+    new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9201)))
 
   override protected def withFixture(test: OneArgTest): Outcome = {
     implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
@@ -32,7 +33,8 @@ class ElasticClientIntSpec
 
   override protected def afterAll(): Unit = testClient.close()
 
-  override protected def afterEach(): Unit = testClient.performRequest(new Request("DELETE", "/_all"))
+  override protected def afterEach(): Unit =
+    testClient.indices().delete(new DeleteIndexRequest("_all"), RequestOptions.DEFAULT)
 
   "document:create" should {
     val index = "test-index"
@@ -40,23 +42,16 @@ class ElasticClientIntSpec
     val movie = Movie("Titanic")
 
     "create a new document" in { client =>
-      val result = client.send(Create(index, id, movie))
-
-      result shouldBe Right(BasicResponse(index, "_doc", id, 1, "created"))
+      client.send(Create(index, id, movie)) shouldBe Right(BasicResponse(index, "_doc", id, 1, "created"))
     }
 
     "fail if document id already exists" in { client =>
-      val firstCreate  = client.send(Create(index, id, movie))
-      val secondCreate = client.send(Create(index, id, movie))
+      val create       = Create(index, id, movie)
+      val firstCreate  = client.send(create)
+      val secondCreate = client.send(create)
 
       firstCreate.isRight shouldBe true
       secondCreate.left.value.error.reason should include("document already exists")
     }
-  }
-
-  def storeMovie(index: String, movie: Movie): Unit = {
-    val request = new Request("POST", s"$index/_doc")
-    request.setJsonEntity(movie.asJson.noSpaces)
-    testClient.performRequest(request)
   }
 }

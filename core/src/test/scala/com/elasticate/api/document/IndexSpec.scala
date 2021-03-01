@@ -2,7 +2,7 @@ package com.elasticate.api.document
 
 import com.elasticate.api.ElasticMethod.{Post, Put}
 import io.circe.syntax.EncoderOps
-import models.Movie
+import data.Movie
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
